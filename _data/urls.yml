@@ -1,0 +1,30 @@
+profile_rss_url: '/atom.xml'
+profile_rss_title: 'RSS Newsfeed'
+profile_rss_name: 'rss'
+profile_rss_icon: '/img/soc_rss.png'
+
+profile_twitter_url: 'https://twitter.com/xokomola'
+profile_twitter_title: '@xokomola on Twitter'
+profile_twitter_name: 'twitter'
+profile_twitter_icon: '/img/soc_tweet.png'
+
+profile_github_url: 'https://github.com/xokomola'
+profile_github_title: 'Software projects on GitHub'
+profile_github_name: 'github'
+profile_github_icon: '/img/soc_github.png'
+
+profile_youtube_url: 'https://youtube.com/xokomola'
+profile_youtube_title: 'Videos on Youtube'
+profile_youtube_name: 'youtube'
+profile_youtube_icon: '/img/soc_youtube.png'
+
+profile_soundcloud_url: 'https://soundcloud.com/xokomola'
+profile_soundcloud_title: 'Sounds on Soundcloud'
+profile_soundcloud_name: 'soundcloud'
+profile_soundcloud_icon: '/img/soc_soundcloud.png'
+
+profile_linkedin_url: 'https://nl.linkedin.com/in/marcvangrootel'
+#profile_linkedin_url: '/about/about-linkedin.html'
+profile_linkedin_title: 'LinkedIn Profile'
+profile_linkedin_name: 'linkedin'
+profile_linkedin_icon: '/img/soc_linkedin.png'

@@ -1,0 +1,26 @@
+city: {
+  title: 'A city by night',
+  author: '@Doug88888',
+  profile: 'http://www.flickr.com/photos/doug88888',
+  url: 'http://www.flickr.com/photos/doug88888/6483519343',
+  src: '/media/banners/city.jpg',
+  position: 'center 440px'
+}
+
+desk: {
+  title: 'Desk',
+  author: 'Gavin Clarke',
+  profile: 'http://www.flickr.com/photos/light_arted',
+  url: 'http://www.flickr.com/photos/light_arted/2547462089',
+  src: '/media/banners/desk.jpg',
+  position: 'center 240px'
+}
+
+fireworks: {
+  title: 'Fireworks',
+  author: 'Scott Robinson',
+  profile: 'http://www.flickr.com/photos/clearlyambiguous/',
+  url: 'http://www.flickr.com/photos/clearlyambiguous/183629188',
+  src: '/media/banners/fireworks.jpg',
+  position: 'center 0px'
+}

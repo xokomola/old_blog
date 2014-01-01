@@ -1,0 +1,387 @@
+---
+---
+@media print {
+  #sidebar, #subscribe, #navigate, #comments, #overlay, #footer {
+    display: none;
+  }
+  #imprint {
+    display: block;
+  }
+}
+
+body {
+  line-height: 150%;
+  font-size: 14pt;
+  color: {{ site.data.colors.bodyfg }};
+  background: {{ site.data.colors.footerbg }};
+  margin: 0;
+  padding: 0;
+  font-family: "Source Sans Pro";
+  /* font-family: "Helvetica Neue", Arial, Helvetica, sans-serif; */
+}
+
+#header {
+  margin: 0 0 0 0;
+}
+
+#header_spacer {
+  padding-top: 84px;
+  color: {{ site.data.colors.bodyfg }};
+  background: {{ site.data.colors.bodybg }};
+}
+
+#title {
+  position: absolute;
+  z-index: 100;
+  padding-top: 16px;
+  padding-left: 20px;
+  font-size: 32pt;
+  line-height: 36pt;
+}
+
+#title a {
+  color: {{ site.data.colors.b }};
+}
+
+#overlay {
+  color: #cfe0d5;
+  font-family: Bitter, Georgia, serif;
+  font-weight: bold;
+  font-size: 60px;
+  position: absolute;
+  z-index: 10;
+  padding-top: 40px;
+  padding-left: 164px;
+}
+
+#banner_credit a:hover {
+  color: #fff !important;
+}
+
+#banner_credit a,  #banner_credit a:link, #banner_credit a:visited {
+  text-decoration: none;
+  color: {{ site.data.cover.creditcolor }};
+}
+
+#banner {
+  background-color: #2B2B2B;
+  background-size: cover;
+  height: {{ site.data.cover.height }}px;
+  box-shadow: inset 0 0 15px rgba(0,0,0,.5);
+}
+
+#banner_credit {
+  color: {{ site.data.cover.creditcolor }};
+  font-family: Consolas, Lucida Console, monospace;
+  font-size: {{ site.data.cover.creditsize }}px;
+  padding-top: {{ site.data.cover.height | minus: 24 }}px;
+  padding-right: 10px;
+  z-index: 100;
+  float: right;
+}
+
+#imprint {
+  display: none;
+}
+
+#meat {
+  margin: 0 0 0 0;
+  padding-bottom: 20px;
+  color: {{ site.data.colors.bodyfg }};
+  background: {{ site.data.colors.bodybg }};
+}
+
+#site {
+  width: 980px;
+  padding-left: 20px;
+  padding-top: 24px;
+  margin: auto;
+}
+
+#menu a {
+  color: {{ site.data.colors.b }};
+}
+
+#sidebar {
+  width: 120px;
+  padding: 10px 20px 20px 20px;
+  border-left: 5px solid #eee;
+  float: right;
+  font-size: 84%;
+}
+#sidebar a, #sidebar a:link #sidebar a:visited {
+  color: {{ site.data.colors.bodyfg }};
+}
+#sidebar dl, #sidebar ul {
+  margin: 0 0 30px 0;
+  padding: 0;
+}
+#sidebar dl#contact dt {
+  display: none;
+}
+#sidebar dl#contact dd {
+  margin: 0;
+}
+#sidebar ul {
+  list-style-type: none;
+}
+#sidebar a {
+  text-decoration: none;
+}
+#sidebar .adr, #sidebar .tel {
+  display: none;
+}
+
+#footer {
+  margin: 0 0 0 0;
+  margin-top: 60px;
+  background-color: {{ site.data.colors.footerbg }};
+  color: {{ site.data.colors.footerfg }};
+  padding-top: 1px;
+  padding-bottom: 24px;
+  padding-left: 24px;
+  padding-right: 48px;
+  text-align: center;
+  font-size: 68%;
+}
+
+#footer img {
+  float: none !important;
+}
+
+.container {
+  width: 980px;
+  margin: 0 auto;
+}
+
+ul {
+  list-style-type: square;
+  si
+}
+
+.clear {
+  clear: both;
+}
+
+img {
+  border: 0;
+  border-radius: 3px;
+  float: right;
+  margin-left: 20px;
+}
+
+/*
+img:not([width]) {
+  width: 68%;
+}
+*/
+
+del {
+  text-decoration: line-through; /* just in case */
+}
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+  border:1px solid {{ site.data.colors.bodyshadow }};
+  border-left: 0px;
+  border-right: 0px;
+  width:100%;
+  height:100%;
+  margin:0px;
+  padding:0px;
+  font-size: 92%;
+}
+
+td, th {
+  padding: 8px;
+  border:1px solid {{ site.data.colors.bodyshadow }};
+  border-left: 0px;
+  border-right: 0px;
+}
+
+a:hover, a:active, #sidebar a:active, #sidebar a:hover, #content a {
+  color: {{ site.data.colors.a }} !important;
+}
+
+#subscribe {
+  float: right;
+  margin: 20px;
+}
+
+h1 {
+  margin: 0;
+  padding: 20px;
+  font-weight: normal;
+  font-size: 48px;
+}
+
+a {
+  text-decoration: none;
+}
+
+h1 a, h1 a:link, h1 a:visited {
+  text-decoration: none;
+  color: {{ site.data.colors.bodyfg }};
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: Bitter, Georgia, serif;
+  line-height: 1.3;
+}
+
+hr {
+  height: 1px;
+  border: 0;
+  color: {{ site.data.colors.bodyshadow }};
+  background-color: {{ site.data.colors.bodyshadow }};
+}
+
+#comments hr {
+  height: 4px;
+  border: 0;
+  color: {{ site.data.colors.bodyfg }};
+  background-color: {{ site.data.colors.bodyfg }};
+}
+
+#menu {
+  padding-top: 40px;
+  padding-right: 40px;
+  margin: 0;
+  font-family: Bitter, Georgia, serif;;
+  text-transform: uppercase;
+  float: right;
+}
+
+#menu li {
+  display: inline;
+  padding-left: 15px;
+}
+
+#navigate p {
+  margin-top: 0;
+}
+
+#navigate a {
+  text-decoration: none;
+}
+
+#navigate a.nav-earlier {
+}
+
+#navigate a.nav-later {
+  float: right;
+}
+
+blockquote {
+  padding: 4px 4px 4px 10px;
+  border-left: 5px solid {{ site.data.colors.bodyshadow }};
+}
+
+#content {
+  width: 720px;
+  padding: 0 0 0 76px;
+}
+#content ul {
+  padding: 0;
+  padding-top: 20px;
+  margin: 0;
+}
+#content li {
+  margin-left: 16px;
+  margin-bottom: 10px;
+}
+
+h3 {
+  margin: 0 0 10px 0;
+  padding: 0;
+}
+
+li code, p code {
+  font-family: Consolas, Lucida Console, monospace;
+  color: {{ site.data.colors.b }};
+}
+
+code, pre {
+  font-family: Consolas, Lucida Console, monospace !important;
+  font-size: 92%;
+}
+
+.gist, .gist-file {
+  font-size: 94%;
+}
+
+.highlight pre {
+  color:#fdce93; 
+  background-color: {{ site.data.colors.codebg }};
+  border: 1px solid {{ site.data.colors.codeborder }};
+  border-radius: 3px;
+  padding: 15px;
+  font-size: 90%;
+}
+
+#post {
+  margin-bottom: 30px;
+}
+
+#disqus_thread {
+  margin-bottom: 130px;
+}
+
+#related {
+  margin-bottom: 30px;
+}
+
+#navigate {
+  margin-bottom: 30px;
+}
+
+#related ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+#related li {
+  margin-bottom: 10px;
+}
+
+#tags {
+  margin-bottom: 60px;
+}
+
+#tags p {
+  margin-top: 0px;
+  float: right;
+  margin-bottom: 20px;
+  font-size: 80%;
+}
+
+.posts p {
+  margin: 0 0 12px 0;
+}
+
+ul.posts {
+  list-style-type: none;
+  margin-left: 0px;
+}
+
+ul.posts li {
+  margin-left: 0px;
+}
+
+ul.posts a {
+  font-family: Bitter, Georgia, serif;
+  line-height: 1.3;
+  text-decoration: none;
+}
+
+.rss_only {
+  display: none;
+}
+
+.date {
+  float: right;
+  color: {{ site.data.colors.bodygrey }};
+  font-size: 12pt;
+}

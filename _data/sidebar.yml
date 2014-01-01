@@ -1,0 +1,10 @@
+# global default for profile links in sidebar
+# these can be downvoted or upvoted per post/page
+twitter: 1
+github: 1
+youtube: 1
+soundcloud: 0
+linkedin: 0
+# tweet buttons
+tweet: 0
+followers: 0

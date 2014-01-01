@@ -1,0 +1,12 @@
+# the top menu items
+- {
+  name: 'About',
+  title: 'A little bit more about this blog',
+  url: '/about'
+}
+- {
+  name: 'Archive',
+  title: 'Older posts by year',
+  url: '/archive'  
+}
+

@@ -3,7 +3,7 @@ name: xokomola
 markdown: kramdown
 pygments: true
 # comments defaults: posts (on), pages (off)
-comments: 1
+comments: 0
 # show sidebar
 sidebar: 1
 banner: fireworks

@@ -1,6 +1,5 @@
 ---
 layout: default
-foo: bar
 ---
 {% assign channel_info = site.data.channels %}
 {% capture channel_list %}
@@ -14,7 +13,7 @@ foo: bar
     {% for channel_name in sorted_channels %}
     {% if channel_info[channel_name].active == true %}
     <li>
-        <a href="{{ channel_info[channel_name].url }}">{{ channel_name }}</a> 
+        <a href="{{ channel_info[channel_name].url }}">{{ channel_name }}</a>{% if channel_info[channel_name].feed %} (<a href="{{ channel_info[channel_name].feed }}">RSS feed</a>){% endif %} 
         <span class="channel_size">({% if channel_name == 'all' %}{{ site.posts.size }}{% else %}{{ site.categories[channel_name].size }}{% endif %})</span>
         {% if channel_info[channel_name].desc %}
         <span class="channel_desc">{{ channel_info[channel_name].desc |  markdownify }}</span>

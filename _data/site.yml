@@ -1,4 +1,4 @@
 # is analytics used?
-analytics: false
+analytics: true
 # google analytics site code
 analytics_code: UA-7705195-1

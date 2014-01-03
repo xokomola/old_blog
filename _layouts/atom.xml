@@ -1,0 +1,30 @@
+---
+layout: nil
+---
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <id>{{ site.data.urls.base }}/tags/{{ page.tag }}</id>
+  <title>{{ site.name }}</title>
+  <link href="{{ site.data.urls.base }}{{ page.url }}" rel="self"/>
+  <link href="{{ site.data.urls.base }}/tags/{{ page.tag }}/"/>
+  <updated>{{ site.time | date_to_xmlschema }}</updated>
+  {% comment %}<category term="{{ tag }}"/>{% endcomment %}
+
+  {% for cat in site.categories %}
+  <category cat="{{ cat | first }}"/>
+  {% endfor %}
+
+  {% for tag in site.tags %}
+  <category term="{{ tag | first }}"/>
+  {% endfor %}
+  <author>
+    <name>{{ site.name }}</name>
+  </author>{% for post in site.posts %}{% for tag in post.tags %}{% if tag == page.tag %}
+  <entry>
+    <id>{{ site.data.urls.base }}{{ post.id }}</id>
+    <title type="text">{{ post.title }}</title>
+    <link href="{{ site.data.urls.base }}{{ post.url }}"/>
+    <updated>{{ post.date | date_to_xmlschema }}</updated>
+    <content type="html">{{ post.content | markdownify | xml_escape }}</content>
+  </entry>{% endif %}{% endfor %}{% endfor %}
+</feed>

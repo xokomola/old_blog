@@ -1,0 +1,7 @@
+about: {
+  desc: 'This is about **me** or about the **blog**'
+}
+
+xml: {
+  desc: 'The [markup](http://google.nl) language that is.'
+}

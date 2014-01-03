@@ -1,0 +1,23 @@
+# An article can be put in 0 or more channels (categories)
+# This describes the channels.
+
+all: {
+  url: '/channels/all',
+  feed: '/channels/all/atom.xml',
+  desc: 'All posts go here',
+  active: true
+}
+
+software: {
+  url: '/channels/software',
+  feed: '/channels/software/atom.xml',
+  desc: 'This is about **me** or about the **blog**',
+  active: true
+}
+
+music: {
+  url: '/channels/music',
+  feed: '/channels/music/atom.xml',
+  desc: 'The [markup](http://google.nl) language that is.',
+  active: false
+}

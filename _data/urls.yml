@@ -1,4 +1,4 @@
-base: 'http://xokomola.github.io'
+base: 'http://xokomola.com'
 profile_rss_url: '/channels'
 profile_rss_title: 'Feeds'
 profile_rss_name: 'rss'

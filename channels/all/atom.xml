@@ -7,7 +7,7 @@ channel: all
   <id>{{ site.data.urls.base }}/channels/{{ channel }}</id>
   <title>{{ site.name }}</title>
   <link href="{{ site.data.urls.base }}{{ page.url }}" rel="self"/>
-  <link href="{{ site.data.urls.base }}/channels/{{ channel }}/"/>
+  <link href="{{ site.data.urls.base }}/channels/{{ channel }}"/>
   <updated>{{ site.time | date_to_xmlschema }}</updated>
   {% for tag in site.tags %}
   <category term="{{ tag | first }}"/>

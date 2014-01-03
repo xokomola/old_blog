@@ -1,0 +1,17 @@
+---
+layout: default
+---
+{% assign this_channel = 'music' %}
+<section id="posts">
+  {% if site.categories[this_channel].size > 0 %}
+  <ul class="posts">
+  {%for post in site.categories[this_channel] limit: 25 %}
+    <li>
+      <span class="date">{{ post.date | date:"%d %b %Y" }}</span>
+      <a href="{{ post.url }}">{{ post.title }}</a>
+      <p>{{ post.summary | markdownify }}</p>
+    </li>
+  {% endfor %}
+  </ul>
+  {% endif %}
+</section>

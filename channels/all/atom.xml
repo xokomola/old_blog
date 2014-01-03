@@ -1,25 +1,25 @@
 ---
 layout: nil
+channel: all
 ---
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom">
-  <id>{{ site.data.urls.base }}</id>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:base="{{ site.data.urls.base }}/">
+  <id>{{ site.data.urls.base }}/channels/{{ channel }}</id>
   <title>{{ site.name }}</title>
-  <link href="{{ site.data.urls.base }}{{ site.data.urls.profile_rss_url }}" rel="self"/>
-  <link href="{{ site.data.urls.base }}/"/>
+  <link href="{{ site.data.urls.base }}{{ page.url }}" rel="self"/>
+  <link href="{{ site.data.urls.base }}/channels/{{ channel }}/"/>
   <updated>{{ site.time | date_to_xmlschema }}</updated>
-  {% comment %}<category term="{{ tag }}"/>{% endcomment %}
   {% for tag in site.tags %}
-  <category term="{{ tag }}"/>
+  <category term="{{ tag | first }}"/>
   {% endfor %}
   <author>
     <name>{{ site.name }}</name>
-  </author>{% for post in site.posts limit: 10 %}
+  </author>{% for post in site.posts %}
   <entry>
     <id>{{ site.data.urls.base }}{{ post.id }}</id>
     <title type="text">{{ post.title }}</title>
     <link href="{{ site.data.urls.base }}{{ post.url }}"/>
     <updated>{{ post.date | date_to_xmlschema }}</updated>
-    <content type="html">{{ post.content | xml_escape }}</content>
+    <content type="html">{{ post.content | markdownify | xml_escape }}</content>
   </entry>{% endfor %}
 </feed>

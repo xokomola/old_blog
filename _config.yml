@@ -6,3 +6,4 @@ pygments: true
 comments: -10
 # show sidebar
 sidebar: 1
+banner: fireworks

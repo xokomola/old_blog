@@ -1,5 +1,6 @@
-profile_rss_url: '/atom.xml'
-profile_rss_title: 'RSS Newsfeed'
+base: 'http://xokomola.github.io'
+profile_rss_url: '/channels'
+profile_rss_title: 'Feeds'
 profile_rss_name: 'rss'
 profile_rss_icon: '/img/soc_rss.png'
 

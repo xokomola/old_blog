@@ -1,0 +1,24 @@
+---
+layout: default
+---
+{% assign channel_info = site.data.channels %}
+{% capture channel_list %}
+ all
+{% for channel in site.categories %}
+{{ channel[0] }}
+{% endfor %}
+{% endcapture %}
+<ul>
+    {% assign sorted_channels = channel_list | split:' ' | sort %}
+    {% for channel_name in sorted_channels %}
+    {% if channel_info[channel_name].active == true %}
+    <li>
+        <a href="{{ channel_info[channel_name].url }}">{{ channel_name }}</a> 
+        <span class="channel_size">({% if channel_name == 'all' %}{{ site.posts.size }}{% else %}{{ site.categories[channel_name].size }}{% endif %})</span>
+        {% if channel_info[channel_name].desc %}
+        <span class="channel_desc">{{ channel_info[channel_name].desc |  markdownify }}</span>
+        {% endif %}
+    </li>
+    {% endif %}
+    {% endfor %}
+</ul>

@@ -1,17 +1,18 @@
 ---
 layout: default
 comments: 1
+banner: desk
 ---
 
 <div id="post">
-  <div class="date">{{ page.date | date:"%b %d %Y" }}</div>
+  <div class="date">{{ page.date | date:"%d %b %Y" }}</div>
   <h2>{{ page.title }}</h2>
   <hr>
   <div id="tags">
     <p>
     {% for tag in page.tags %}
-    {% if forloop.first == true %}Posted in: {% endif %} 
-    <a href="/tags/{{ tag }}" title="View posts tagged with &quot;{{ tag }}&quot;">{{ tag }}</a>{% if forloop.last != true %}, {% endif %} 
+    {% if forloop.first == true %}Tags: {% endif %} 
+    <a href="/tags/#{{ tag }}" title="View posts tagged with &quot;{{ tag }}&quot;">{{ tag }}</a>{% if forloop.last != true %}, {% endif %} 
     {% endfor %}
     </p>
   </div>

@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-{% assign banner = site.data.banners.fireworks %}
+{% capture banner_name %}{% if page.banner %}{{ page.banner }}{% else %}{{ site.banner }}{% endif %}{% endcapture %}
+{% assign banner = site.data.banners[banner_name] %}
 {% assign sidebar = site.data.sidebar %}
 {% assign show_sidebar       = site.sidebar  | plus: page.sidebar  | plus: post.sidebar  %}
 {% assign show_comments      = site.comments | plus: page.comments | plus: post.comments %}
-
 {% assign profile_twitter    = sidebar.twitter | plus: page.twitter %}
 {% assign profile_github     = sidebar.github | plus: page.github %}
 {% assign profile_youtube    = sidebar.youtube | plus: page.youtube %}
@@ -38,7 +38,6 @@
      {% endfor %}
   </head>
   <body>
-
       <div id="header">
         <div class="container">
           {% include menu.html %}

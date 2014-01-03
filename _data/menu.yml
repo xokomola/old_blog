@@ -1,12 +1,22 @@
 # the top menu items
 - {
-  name: 'About',
-  title: 'A little bit more about this blog',
-  url: '/about'
+  name: 'Tags',
+  title: 'Posts per tag',
+  url: '/tags'
+}
+- {
+  name: 'Channels',
+  title: 'Posts per channel',
+  url: '/channels'
 }
 - {
   name: 'Archive',
   title: 'Older posts by year',
   url: '/archive'  
+}
+- {
+  name: 'About',
+  title: 'A little bit more about this blog',
+  url: '/about'
 }
 

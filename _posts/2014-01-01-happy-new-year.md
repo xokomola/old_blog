@@ -3,7 +3,6 @@ layout: post
 title: Happy 2014
 summary: 
 published: true
-nocomments: true
 tags: about
 ---
 

@@ -11,7 +11,7 @@
 
 body {
   line-height: 150%;
-  font-size: 14pt;
+  font-size: 12pt;
   color: {{ site.data.colors.bodyfg }};
   background: {{ site.data.colors.footerbg }};
   margin: 0;
@@ -131,6 +131,9 @@ body {
 #sidebar .adr, #sidebar .tel {
   display: none;
 }
+.footnotes {
+  font-size: 86%;
+}
 
 #footer {
   margin: 0 0 0 0;
@@ -166,7 +169,7 @@ ul {
 img {
   border: 0;
   border-radius: 3px;
-  float: right;
+  float: none;
   margin-left: 20px;
 }
 
@@ -284,7 +287,8 @@ blockquote {
 }
 #content ul {
   padding: 0;
-  padding-top: 20px;
+  padding-bottom: 8px;
+  padding-left: 8px;
   margin: 0;
 }
 #content li {
@@ -298,12 +302,13 @@ h3 {
 }
 
 li code, p code {
-  font-family: Consolas, Lucida Console, monospace;
+  font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
+  font-size: 80%;
   color: {{ site.data.colors.b }};
 }
 
 code, pre {
-  font-family: Consolas, Lucida Console, monospace !important;
+  font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace; !important;
   font-size: 92%;
 }
 
@@ -312,7 +317,6 @@ code, pre {
 }
 
 .highlight pre {
-  color:#fdce93; 
   background-color: {{ site.data.colors.codebg }};
   border: 1px solid {{ site.data.colors.codeborder }};
   border-radius: 3px;
@@ -359,6 +363,10 @@ code, pre {
 
 .posts p {
   margin: 0 80px 12px 0;
+}
+
+abbr {
+  border-bottom: dotted 1px;
 }
 
 ul.posts {

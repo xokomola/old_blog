@@ -1,9 +1,10 @@
 name: xokomola
 #markdown: redcarpet
-markdown: kramdown
-pygments: true
+#markdown: kramdown
+markdown: KramdownPygments
+highlighter: pygments
 # comments defaults: posts (on), pages (off)
-comments: 0
+comments: -10
 # show sidebar
 sidebar: 1
 banner: city

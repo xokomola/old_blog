@@ -1,0 +1,25 @@
+unbundle-pallet: 10 8 3 9 1
+label-heavy: 10
+is-non-food: 11
+label-heavy: 8
+is-non-food: 9
+label-heavy: 3
+is-non-food: 3
+label-heavy: 9
+is-non-food: 10
+label-heavy: 1
+is-non-food: 1
+unbundle-pallet: 2 1 1 9 8 12
+label-heavy: 2
+is-non-food: 2
+label-heavy: 1
+is-non-food: 1
+label-heavy: 1
+is-non-food: 1
+label-heavy: 9
+is-non-food: 10
+label-heavy: 8
+is-non-food: 9
+label-heavy: 12
+is-non-food: 13
+Result: 3 tests, 1 failure, 0 errors, 0 skipped.

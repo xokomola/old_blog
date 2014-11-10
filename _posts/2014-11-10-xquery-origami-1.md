@@ -2,6 +2,7 @@
 layout: post
 title: Origami - XQuery Templating Reloaded!
 tags: xquery xml html origami
+excerpt: Introducing Origami Transformers for XQuery 3.0
 ---
 
 I started to work on an XQuery templating library called

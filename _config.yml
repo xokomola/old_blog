@@ -1,7 +1,7 @@
 name: xokomola
 #markdown: redcarpet
-#markdown: kramdown
-markdown: KramdownPygments
+markdown: kramdown
+#markdown: KramdownPygments
 highlighter: pygments
 # comments defaults: posts (on), pages (off)
 comments: -10

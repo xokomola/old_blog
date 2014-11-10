@@ -1,15 +1,5 @@
 # the top menu items
 - {
-  name: 'Tags',
-  title: 'Posts per tag',
-  url: '/tags'
-}
-- {
-  name: 'Channels',
-  title: 'Posts per channel',
-  url: '/channels'
-}
-- {
   name: 'Archive',
   title: 'Older posts by year',
   url: '/archive'  

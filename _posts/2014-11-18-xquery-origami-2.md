@@ -7,8 +7,8 @@ excerpt: Screen scraping with Origami
 
 In a [previous post][origami-1] I introduced [Origami][origami] and
 showed a little transformation "engine" inspired by XSLT. In this post I
-want to look at how I can extract nodes from an XML or, in this case, an
-HTML document.
+want to look at extracting nodes from an XML or, in this case, an HTML
+document.
 
 I want to build a little screen scraper that returns the [New York
 Times][nytimes] headline stories from it's main web page. This example

@@ -156,14 +156,14 @@ The question mark will be filled in with the current input node when
 running the transformation.
 
 A transformer is defined by a sequence of these templates. The
-`xf:xform` function returns a transformer function that can be used to
+`xf:transform` function returns a transformer function that can be used to
 transform input nodes.
 
 When this transformer function is then evaluated with a node sequence it
 will use `xf:apply` to start the transformation process.
 
 ~~~xquery
-declare function xf:xform($templates as map(*)*) as function(*) {
+declare function xf:transform($templates as map(*)*) as function(*) {
     function ($nodes as item()*) as item()* {
         xf:apply($nodes, $templates)
     }
@@ -187,7 +187,7 @@ declare variable $tpl := xf:template('*', upper(?));
 $tpl
 
 => map {
-     'match': xf:matches(?, '*'),
+     'selector': xf:matches(?, '*'),
      'fn': upper(?)
    }
 ~~~
@@ -302,7 +302,7 @@ transformation away from the transformation engine.
 ## Wrap up
 
 I haven't cared much for performance yet. The main point was the design.
-Currently it only runs on BaseX 8.0 betas but I see no reason why it
+Currently it runs on BaseX 7.9 and higher but I see no reason why it
 could not be made to run on other XQuery 3.0 engines. BaseX is my main
 database at the moment and I am not going to be investing a lot of time
 in other database yet.

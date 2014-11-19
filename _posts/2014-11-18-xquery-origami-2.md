@@ -18,7 +18,7 @@ tutorial][nolen].
 If you can't wait you can take a look at the [example
 code][scrape-example].
 
-## Selecting nodes
+## Extracting nodes
 
 Selecting nodes from an XML document is the bread and butter of XPath so
 why would I want to hide that using code from a library?
@@ -27,7 +27,7 @@ why would I want to hide that using code from a library?
   nodes from HTML documents (the longer term goal being to use them for
   templating).
 
-- To make it easier to compose node selectors from smaller ones.
+- To compose extraction processes from smaller re-usable functions.
 
 - To make such code easier to read which probably translates to easier
   to maintain.
@@ -59,9 +59,8 @@ browser using it's development tools. Another way is to save the parsed
 XML and then use an XML IDE such as Oxygen to study it using some XPath
 queries. Or a combination of the two.
 
-But let's not ponder these practical issues any longer. Using the
-Clojure tutorial example, and some digging of my own I came up with a
-way to select the story elements from the parsed HTML.
+Using the Clojure tutorial example, and some digging of my own I came up
+with a way to select the story elements from the parsed HTML.
 
 ~~~xquery
 let $stories := xf:extract(
@@ -83,8 +82,9 @@ expression.
 You may wonder that if `xf:select` is already selecting nodes from the
 input document. Why did I wrap it in `xf:extract`? When I tested this I
 found 131 stories with `xf:select`. This is caused by a 'story' article
-wrapped inside another one. The `xf:extract` will ensure that for nested
-nodes only the outermost node is returned.
+wrapped inside another one. The `xf:extract` will ensure that only the
+unique nodes are returned and no node will also be a descendant of
+another node.
 
 Also, an extractor may be using several selectors.
 
@@ -188,7 +188,7 @@ nodes come out, ... or not.
 The selector first looks for nodes satisfying the XPath expression, then
 each of them is transformed into a text node and in the last step this
 text node is wrapped in a new element. The result will be much more
-appealing to our inner markup-geek more than a bunch of HTML tags.
+appealing to our inner markup-geek than a bunch of HTML tags.
 
 Removing incomplete stories is now a no-brainer. The following
 FLOWR-expression takes care of that.

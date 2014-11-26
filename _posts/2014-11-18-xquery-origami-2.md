@@ -11,7 +11,7 @@ want to look at extracting nodes from an XML or, in this case, an HTML
 document.
 
 I want to build a little screen scraper that returns the [New York
-Times][nytimes] headline stories from it's main web page. This example
+Times][nytimes] headline stories from it's frontpage. This example
 is similar to the [example][nolen-scrape] in David Nolen's [Enlive
 tutorial][nolen].
 
@@ -20,8 +20,9 @@ code][scrape-example].
 
 ## Extracting nodes
 
-Selecting nodes from an XML document is the bread and butter of XPath so
-why would I want to hide that using code from a library?
+Selecting nodes from an XML document is the bread and butter of XPath
+and something which can be done directly in regular XQuery
+code. Why wrap it in a library function?
 
 - To [decomplect][decomplecting] the process of selecting and extracting
   nodes from HTML documents (the longer term goal being to use them for
@@ -33,7 +34,7 @@ why would I want to hide that using code from a library?
   to maintain.
 
 Not convinced? Need proof? Good. Let me build a screen scraper that will
-fetch the headline stories from the New York Times' home page.
+fetch the headline stories from the New York Times frontpage.
 
 ~~~xquery
 let $url := 'http://www.nytimes.com'
@@ -41,20 +42,20 @@ let $input := xf:fetch-html($url)
 ~~~
 
 Simple enough. The `$input` variable now contains an XML document which
-was parsed from the New York Times home page using the
+was parsed from the New York Times frontpage using the
 [TagSoup][tagsoup] parser that comes with BaseX.
 
 Most of the HTML found in the wild is not nearly as neatly structured as
-a markup-geek like me wants. It's a tag soup. Hence, the name of the
+a markup-geek like me would like. It's tag soup. Hence, the name of the
 process that tries to extract meaningful information from it: screen
 *scraping*. That doesn't sound like a very clean process, does it?
 
-What's more, the developers from the web site will not tell you when
-they modify their HTML so your little screen scraper may fail at any
-moment.
+What's more, the developers from the web site will probably not inform
+me when they modify their HTML so my little screen scraper may fail
+at any moment.
 
-In fact, to find the pieces of information in such a tag soup you will
-have to go in and view the source. One way is to look at it from a web
+To find the pieces of information in such a tag soup I have to go in and
+look at the source. One way to do this is looking at it from a web
 browser using it's development tools. Another way is to save the parsed
 XML and then use an XML IDE such as Oxygen to study it using some XPath
 queries. Or a combination of the two.
@@ -64,7 +65,7 @@ with a way to select the story elements from the parsed HTML.
 
 ~~~xquery
 let $stories := xf:extract(
-        xf:select('article[contains(@class,"story")]'));
+        xf:select('article[contains(@class, "story")]'));
 return
     count($stories($input))
     
@@ -79,8 +80,8 @@ The `$stories` variable contains a function that, when provided with
 some input nodes, will search for nodes matching the provided XPath
 expression.
 
-You may wonder that if `xf:select` is already selecting nodes from the
-input document. Why did I wrap it in `xf:extract`? When I tested this I
+You may wonder why, if `xf:select` is already selecting nodes from the
+input document, I wrapped it in `xf:extract`? When I tested this I
 found 131 stories with `xf:select`. This is caused by a 'story' article
 wrapped inside another one. The `xf:extract` will ensure that only the
 unique nodes are returned and no node will also be a descendant of
@@ -90,8 +91,8 @@ Also, an extractor may be using several selectors.
 
 ~~~xquery
 let $stories := xf:extract((
-        xf:select('article[contains(@class,"story")]'),
-        xf:select('article[contains(@class,"fairy-tale")]')
+        xf:select('article[contains(@class, "story")]'),
+        xf:select('article[contains(@class, "fairy-tale")]')
 ))
 ~~~
 
@@ -103,29 +104,29 @@ extractors. All of these will act upon a story node selected above.
 
 ~~~xquery
 let $headline := xf:extract((
-  xf:select(('h2','a')),
-  xf:select(('h3','a')),
-  xf:select(('h5','a'))
+  xf:select(('h2', 'a')),
+  xf:select(('h3', 'a')),
+  xf:select(('h5', 'a'))
 ))
 
 let $byline := xf:extract(
-    xf:select('*[contains(@class,"byline")]')
+    xf:select('*[contains(@class, "byline")]')
 )
 
 let $summary := xf:extract(
-    xf:select('*[contains(@class,"summary")]')
+    xf:select('*[contains(@class, "summary")]')
 )
 ~~~
 
 The headlines may be inside a `h2`, `h3`, or `h5`. In this case I've
 written them using separate selectors to illustrate a feature of
-selectors. But of course, this would be much better expressed as a
+extractors. But of course, this would be much better expressed as a
 single XPath expression.
 
-The headline selectors use two separate XPath expressions. One to find
-the heading element and then `a` to find the link element inside the
-heading. This behaves a bit like a CSS selector such as `h2 a` which would be
-equivalent to the XPath expression `h2//a`.
+The headline selectors use two separate XPath expressions (selector
+steps). One to find the heading element and then `a` to find the link
+element inside the heading. This behaves a bit like a CSS selector such
+as `h2 a` which would be equivalent to the XPath expression `h2//a`.
 
 Let's apply them to each story and output some XML.
 
@@ -151,11 +152,10 @@ But there are a few things that could be improved.
 - There are still empty stories and stories that only have a headline. I
   want to exclude those.
 
-## Smarter Selectors
+## Smarter Selectors: selector steps
 
 As the headlines selector already showed, a single selector, created by
-`xf:select`, may be defined with a multiple of selector functions or
-expressions.
+`xf:select`, may be defined with multiple selector steps.
 
 ~~~xquery
 let $headline := xf:extract(
@@ -166,29 +166,30 @@ let $headline := xf:extract(
 
 let $byline := xf:extract(
     xf:select((
-        '*[contains(@class,"byline")][1]', 
+        '*[contains(@class, "byline")][1]', 
         xf:text(), 
         xf:wrap(<byline/>))))
 
 let $summary := xf:extract(
     xf:select((
-        '*[contains(@class,"summary")][1]', 
+        '*[contains(@class, "summary")][1]', 
         xf:text(), 
         xf:wrap(<summary/>))))
 ~~~
 
 Besides improving the XPath for selecting the headlines the more
-interesting part is the use of the `xf:text` and `xf:wrap` functions.
+interesting part here is the use of the `xf:text` and `xf:wrap` functions.
 There's also an `xf:unwrap` function which removes the outer element.
 
-Each selector is a small node transformation pipeline. Each node found
-by the first step in the pipeline is fed into the next until at the end
-nodes come out, ... or not.
+Together these selector steps form a small node transformation pipeline.
+Each node found by the first step in the pipeline is fed into the next
+until at the end nodes come out, ... or not.
 
 The selector first looks for nodes satisfying the XPath expression, then
 each of them is transformed into a text node and in the last step this
 text node is wrapped in a new element. The result will be much more
-appealing to our inner markup-geek than a bunch of HTML tags.
+appealing to a markup-geek like me. Much more so than a bunch of HTML
+tags.
 
 Removing incomplete stories is now a no-brainer. The following
 FLOWR-expression takes care of that.
@@ -228,15 +229,14 @@ web page. Let's run it now.
 ...
 ~~~
 
-## Custom node selector functions
+## Custom selector step functions
 
 You are not limited to using the provided functions though. The code
 for `xf:wrap` serves as a simple example for such a custom function.
 
 ~~~xquery
-declare function xf:wrap($node as element())
-    as function(*) {
-    function($nodes) as element() {
+declare function xf:wrap($node) {
+    function($nodes) {
         element { node-name($node) } {
             $node/@*, $nodes
         }
@@ -244,26 +244,25 @@ declare function xf:wrap($node as element())
 };
 ~~~
 
-Your function (or the function returned by it) should take one argument
-(the input nodes) and produce some output nodes (in this case an
-element). The input nodes are provided by the extractor function when
-you run it.
+The returned function should take one argument (the input nodes) and
+produce some output nodes (in this case an element). The input nodes are
+provided by the extractor function when you run it.
 
 
-## Selecting on HTML class
+## Selecting on HTML class attributes
 
-One final touch that I would like to show is a more correct way to
-select on the class attribute. Doing `contains(@class,'foo')` is not
-correct because this would also match on something like `<div
-class="foobar"/>`. To do it correctly you can use `'foobar' =
-tokenize(@class,'\s+')` but this would not read very well inside a
-selector. In an XPath expression you can use the `$in` convenience
-function to do this without the clutter.
+One final touch that I would like to add is a more correct way to select
+on the class attribute. Doing `contains(@class, 'foo')` is not correct
+because this would also match something like `<div class="foobar"/>`.
+To do it correctly you can use `'foobar' = tokenize(@class, '\s+')` but
+this would not read very well inside a selector. In an XPath expression
+you can use the `$in` convenience function to do this without the
+clutter.
 
 ~~~xquery
 let $select-byline := xf:extract(
     xf:select((
-        '*[$in(@class,"byline")][1]',
+        '*[$in(@class, "byline")][1]',
         xf:text(), 
         xf:wrap(<byline/>))))
 ~~~
@@ -272,7 +271,7 @@ let $select-byline := xf:extract(
 ## Wrap up
 
 I have shown that coding a screen scraper in XQuery can be fun and even
-lead to pretty easy to read (= maintain) code.
+lead to pretty code.
 
 Next, I want to incorporate the same techniques used for the Extractors
 into the [Transformers][origami-1]. The latter still use the quite lame

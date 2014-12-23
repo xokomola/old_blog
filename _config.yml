@@ -4,7 +4,7 @@ markdown: kramdown
 #markdown: KramdownPygments
 highlighter: pygments
 # comments defaults: posts (on), pages (off)
-comments: 0
+comments: -1
 # show sidebar
 sidebar: 1
 banner: city

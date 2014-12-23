@@ -5,6 +5,8 @@ tags: xquery xml html origami
 excerpt: Screen scraping with Origami
 ---
 
+*2014-12-23: updated for Origami 0.4*
+
 In a [previous post][origami-1] I introduced [Origami][origami] and
 showed a little transformation "engine" inspired by XSLT. In this post I
 want to look at extracting nodes from an XML or, in this case, an HTML
@@ -64,8 +66,10 @@ Using the Clojure tutorial example, and some digging of my own I came up
 with a way to select the story elements from the parsed HTML.
 
 ~~~xquery
-let $stories := xf:extract(
-        xf:select('article[contains(@class, "story")]'));
+let $stories := 
+  xf:extract((
+    ['article[contains(@class, "story")]']
+  ));
 return
     count($stories($input))
     
@@ -80,19 +84,24 @@ The `$stories` variable contains a function that, when provided with
 some input nodes, will search for nodes matching the provided XPath
 expression.
 
-You may wonder why, if `xf:select` is already selecting nodes from the
-input document, I wrapped it in `xf:extract`? When I tested this I
-found 131 stories with `xf:select`. This is caused by a 'story' article
-wrapped inside another one. The `xf:extract` will ensure that only the
-unique nodes are returned and no node will also be a descendant of
-another node.
+You may wonder why, if `xf:at` can be used to extract nodes from the
+input document, When I tested this I found 131 stories with `xf:at`.
+This is caused by a 'story' article wrapped inside another one. The
+`xf:extract` will ensure that only the unique nodes are returned and no
+node will also be a descendant of another node.
 
-Also, an extractor may be using several selectors.
+Also, an extractor may be using several selector rules and although the
+first matching rule will be used, there might still be nodes that
+include already selected nodes and given the tagsoup that many HTML in
+the wild is you may need to counter-act this.
+
+An a full extractor also arranges the nodes so that they are in 
+document order again.
 
 ~~~xquery
 let $stories := xf:extract((
-        xf:select('article[contains(@class, "story")]'),
-        xf:select('article[contains(@class, "fairy-tale")]')
+        ['article[contains(@class, "story")]'],
+        ['article[contains(@class, "fairy-tale")]']
 ))
 ~~~
 
@@ -103,87 +112,34 @@ To get the meaningful bits from each story we need a few more
 extractors. All of these will act upon a story node selected above.
 
 ~~~xquery
-let $headline := xf:extract((
-  xf:select(('h2', 'a')),
-  xf:select(('h3', 'a')),
-  xf:select(('h5', 'a'))
-))
-
-let $byline := xf:extract(
-    xf:select('*[contains(@class, "byline")]')
-)
-
-let $summary := xf:extract(
-    xf:select('*[contains(@class, "summary")]')
-)
+let $select-headline := xf:at(['(h2|h3|h5)//a', xf:text()])
+let $select-byline := xf:at(['*[contains(@class,"byline")]', xf:text()])
+let $select-summary := xf:at(['*[contains(@class,"summary")]', xf:text()])
 ~~~
 
-The headlines may be inside a `h2`, `h3`, or `h5`. In this case I've
-written them using separate selectors to illustrate a feature of
-extractors. But of course, this would be much better expressed as a
-single XPath expression.
-
-The headline selectors use two separate XPath expressions (selector
-steps). One to find the heading element and then `a` to find the link
-element inside the heading. This behaves a bit like a CSS selector such
-as `h2 a` which would be equivalent to the XPath expression `h2//a`.
+Note that the `xf:text()` will return `()` instead of an empty string
+when there is no text to be found in the node.
 
 Let's apply them to each story and output some XML.
 
 ~~~xquery
 for $story in $stories($input)
 return
-  <story>
-    <headline>{ string($headline($story)[1]) }</headline>
-    <byline>{ string($byline($story)[1]) }</byline>
-    <summary>{ string($summary($story)[1]) }</summary> 
-  </story>
+  <story>{
+    $headline =>  xf:wrap(<headline/>),
+    $byline => xf:wrap(<byline/>),
+    $summary => xf:wrap(<summary/>)
+  }</story>
 ~~~
+
+Like with `xf:text`, `xf:wrap` and most other node transformer
+functions are "null safe" meaning that in case an empty sequence is
+passed to them they will do nothing or just return the empty sequence,
+instead of, in this case, leaving an empty element.
 
 It should be obvious by now that selectors and extractors can be
 combined or composed in various ways. A selector for a specific job may
 be re-used in different contexts. After all, they are just functions.
-
-But there are a few things that could be improved.
-
-- I want selectors to be a little bit smarter so they provide better
-  results.
-
-- There are still empty stories and stories that only have a headline. I
-  want to exclude those.
-
-## Smarter Selectors: selector steps
-
-As the headlines selector already showed, a single selector, created by
-`xf:select`, may be defined with multiple selector steps.
-
-~~~xquery
-let $headline := xf:extract(
-    xf:select((
-        '((h2|h3|h5)//a)[1]', 
-        xf:text(), 
-        xf:wrap(<headline/>))))
-
-let $byline := xf:extract(
-    xf:select((
-        '*[contains(@class, "byline")][1]', 
-        xf:text(), 
-        xf:wrap(<byline/>))))
-
-let $summary := xf:extract(
-    xf:select((
-        '*[contains(@class, "summary")][1]', 
-        xf:text(), 
-        xf:wrap(<summary/>))))
-~~~
-
-Besides improving the XPath for selecting the headlines the more
-interesting part here is the use of the `xf:text` and `xf:wrap` functions.
-There's also an `xf:unwrap` function which removes the outer element.
-
-Together these selector steps form a small node transformation pipeline.
-Each node found by the first step in the pipeline is fed into the next
-until at the end nodes come out, ... or not.
 
 The selector first looks for nodes satisfying the XPath expression, then
 each of them is transformed into a text node and in the last step this
@@ -196,16 +152,16 @@ FLOWR-expression takes care of that.
 
 ~~~xquery
 for $story in $stories($input)
-let $headline := $headline($story)
-let $byline := $byline($story)
-let $summary := $summary($story)
-where $headline and $byline and $summary
-return
-  <story>{
-    $headline,
-    $byline,
-    $summary
-  }</story>
+  let $headline := $select-headline($story)
+  let $byline :=  $select-byline($story)
+  let $summary := $select-summary($story)
+  where $headline and $byline and $summary
+  return
+    <story>{
+      $headline =>  xf:wrap(<headline/>),
+      $byline => xf:wrap(<byline/>),
+      $summary => xf:wrap(<summary/>)
+    }</story>
 ~~~
 
 Mission accomplised we can get neat, semantic XML scraped from a live
@@ -229,9 +185,9 @@ web page. Let's run it now.
 ...
 ~~~
 
-## Custom selector step functions
+## Custom transformer functions
 
-You are not limited to using the provided functions though. The code
+You are not limited to using the provided functions only. The code
 for `xf:wrap` serves as a simple example for such a custom function.
 
 ~~~xquery
@@ -260,11 +216,7 @@ you can use the `$in` convenience function to do this without the
 clutter.
 
 ~~~xquery
-let $select-byline := xf:extract(
-    xf:select((
-        '*[$in(@class, "byline")][1]',
-        xf:text(), 
-        xf:wrap(<byline/>))))
+let $select-byline := xf:at((['*[$in(@class, "byline")]', xf:text()])
 ~~~
 
 

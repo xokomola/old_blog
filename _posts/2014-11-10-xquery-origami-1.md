@@ -2,15 +2,17 @@
 layout: post
 title: Origami - XQuery Templating Reloaded!
 tags: xquery xml html origami
-excerpt: Introducing Origami Transformers for XQuery 3.0
+excerpt: Introducing Origami Transformers for XQuery 3.1
 ---
+
+*2014-12-23: updated for Origami 0.4*
 
 I started to work on an XQuery templating library called
 [Origami][origami]. In many other languages there are a gazillion
 options when you are looking for a templating library. In XQuery not so
 much. When a transformation gets more involved it's easy to jump over to
 XQuery's brother XSLT but in many situations this is overkill. Origami
-provides a templating option to users of XQuery 3.0.
+provides a templating option to users of XQuery 3.1.
 
 I must not get ahead of myself though. Before I can call Origami a
 proper templating library I need to have a transformation "engine" on
@@ -94,17 +96,28 @@ What I don't want is to write a new transformation engine (similar
 to the typeswitch example) every time I need to transform a few nodes.
 This should be generic.
 
-## Node transformers
+## What is a node transformer?
 
 A node transformer is an ordinary function that takes a single argument,
-the input node, and it returns the output nodes. It should not be
-concerned with how it was selected or by whom. But it may have to look
-elsewhere, outside the input node, to contextualize it's behaviour.
+the input nodes, and it returns the output nodes. It should not be
+concerned with how the input nodes were selected or by which mechanism.
+Of course, like in XSLT these transformers may query ancestor nodes that
+are outside the original input nodes in other parts of the document they
+are part of.
 
 ![Node Transformer]({{ site.url }}/media/node-transformer.png)
 
+Every node transformer has the same, or a compatible signature.
+
 ~~~xquery
-declare function upper($node as element()) as item()* {
+function($nodes as node()*) as node()*
+~~~
+
+So a transformer may declare that it only works with single element
+nodes.
+
+~~~xquery
+declare function upper($node as element()) as node()* {
     element { upper-case(name($node)) } {
         $node/@*,
         xf:apply($node/node())
@@ -123,14 +136,9 @@ This is equivalent to the body of this XSLT template.
 </xsl:template>
 ~~~
 
-I do not want the node transformer to access global variables and I also
-do not want to pass all the transformation templates around with each
-individual template as this would complicate them and make them less
-re-usable.
-
 So, how can I tell the transformation engine which nodes have to be
 copied to the output and which need to have the transformation templates
-applied?
+applied to them?
 
 In XSLT we use the `xsl:apply-templates` instruction to do this.
 Similarly, a node transformation function can call `xf:apply`. But we
@@ -142,176 +150,146 @@ will notice the control node and switch from copy mode back to apply
 mode.
 
 
+## Node transformations
+
+Origami provides a small set of node transformers. But, as I showed
+above it is also simple to define your own.
+
+Here are a couple of provided node transformers:
+
+- `xf:content` replace the child nodes of an element.
+- `xf:replace` replace the input nodes
+- `xf:wrap` wrap an element around the input nodes
+- `xf:unwrap` remove all elements but not their child nodes
+- `xf:append` insert nodes after the last child of each element node
+
+There are more of these node transformers and you compose them to
+form chains of transformations. Using the XQuery arrow operator they
+are also quite easy to read.
+
+~~~xquery
+$input => xf:append(<new-element/>) => xf:wrap(<wrapper/>)
+~~~
+
+This reads much more easily then
+
+~~~xquery
+xf:wrap(xf:append($input, <new-element/>), <wrapper/>))
+~~~
+
+However, you can also combine them using `xf:do` to create a new
+transformer function.
+
+~~~xquery
+let $transform := 
+  xf:do(
+    xf:append(<new-element/>),
+    xf:wrap(, <wrapper/>)
+  )
+return
+  $transform($input)
+~~~
+
+## Node selectors
+
+Given a template document, how can we select the nodes that require
+transformation. In XSLT this is done using match templates.
+
+In Origami you use node selectors which are XPath expressions just
+like you would use in XSLT.
+
+You use the `xf:at` function to create such node selectors.
+
+~~~xquery
+let $selector := xf:at(['li'])
+let $input := <ul><li>item 1</li><li>item 2</li></ul>
+return
+    $selector($input)
+~~~
+
+This will return the two `li` element nodes.
+
+The reason why the argument is an array is that you can combine multiple
+selectors and transformations at the spot.
+
+~~~xquery
+xf:at(['li', xf:text()])
+~~~
+
+Now let's look at how we can combine the selectors with a transformation.
+
+## Extractors
+
+The first variety of transformations handles extraction. In this type of
+transformer we are not looking for transformation of a whole document but
+rather in picking out specific parts of a document and ignoring the rest.
+
+Building an extractor function starts with `xf:extract` and providing it
+a sequence of rules that are arrays consisting of a selector and
+optionally some transformation functions.
+
+~~~xquery
+let $extractor := 
+  xf:extract((
+    ['li[1]', xf:wrap(<first/>)],
+    ['li', xf:wrap(<other/>)]
+  ))
+return
+  $extractor(<ul><li>item 1</li><li>item 2</li><li>item 3</li></ul>)
+  
+=> <first><li>item 1</li></first>
+   <other><li>item 2</li></other>
+   <other><li>item 3</li></other>
+~~~~
+
+Behind the scenes the extractor function creates an `xf:at` function
+using the first array element and then feeds the resulting nodes one by
+one to the transformations which are wrapped in a `xf:do`.
+
+The extractor also takes care of returning the nodes in document order,
+without duplicates and using the transformation of the first rule that
+matches a node.
+
+If you need only one rule you may just as well use:
+
+~~~xquery
+$input => xf:at(['li', xf:wrap(<other/>)])
+
+
 ## Transformers
 
-When building up a transformation I can declare which node
-transformation function to apply to which nodes. Here I use a simple
-selector string which means, apply the node transformer to all elements.
+Contrary to the Extractors above, the second variety of transformation
+is much more similar to XSLT. It tranforms the whole input and outputs
+any node not matched by a transformation rule. The rules, however, are
+the same as with extractors.
 
 ~~~xquery
-xf:template('*', upper(?))
-~~~
-
-The question mark will be filled in with the current input node when
-running the transformation.
-
-A transformer is defined by a sequence of these templates. The
-`xf:transform` function returns a transformer function that can be used to
-transform input nodes.
-
-When this transformer function is then evaluated with a node sequence it
-will use `xf:apply` to start the transformation process.
-
-~~~xquery
-declare function xf:transform($templates as map(*)*) as function(*) {
-    function ($nodes as item()*) as item()* {
-        xf:apply($nodes, $templates)
-    }
-};
-~~~
-
-So now we have to look at the piece that connects individual node
-transformations to specific nodes.
-
-
-## Transformation templates
-
-In order to use a regular function like `upper` it needs to be wrapped
-in `xf:template` together with a selector string or function.
-
-Each template is represented by a map structure.
-
-~~~xquery
-declare variable $tpl := xf:template('*', upper(?));
-
-$tpl
-
-=> map {
-     'selector': xf:matches(?, '*'),
-     'fn': upper(?)
-   }
-~~~
-
-A template has two keys, `match` and `fn`. The first contains a function
-that when called with a node returns `true()` or `false()`. The second
-contains a function that performs the node transformation.
-
-Instead of a string selector you may also pass in a function that
-returns a boolean when passed a node. This function can employ any test
-necessary to decide if this template should be fired for this node.
-
-~~~xquery
-declare variable $tpl := xf:template(
-    function($n) { exists($n/@x) }, upper(?));
-~~~
-
-This template will only fire for nodes that have an `x` attribute.
-
-Instead of passing a node transformation function you can also provide
-a literal result fragment.
-
-~~~xquery
-declare variable $tpl := xf:template(
-    'para', <p>There was a para here</p>);
-~~~
-
-Currently it is not yet possible to specify what to do with the matching
-input node.
-
-
-## Applying templates
-
-Let's dive deeper into the guts of the transformation "engine".
-
-It has two modes: apply and copy. Apply is the mode it starts in but
-when a node transformation returns nodes it switches to copy mode until
-it is explicitly told to go back to apply mode using the `<xf:apply/>`
-control node.
-
-For each node in the node sequence `xf:match` is used to determine which
-template matches. It then evaluates the node transformation function
-belonging to this template and starts copying the returned nodes. When
-no matching template is found it copies the current node and applies the
-child nodes looking for further transformation templates (apply mode).
-
-~~~~xquery
-declare function xf:apply($nodes, $xform) {
-    for $node in $nodes
-    let $fn := xf:match($node, $xform)
-    return
-        if ($fn instance of function(*)) then
-            xf:copy($fn($node), $xform)
-        else if ($node instance of element()) then
-            element { name($node) } {
-                xf:apply($node/@*, $xform),
-                xf:apply($node/node(), $xform)   
-            }
-        else
-            $node
-};
+let $transformer := 
+  xf:transform((
+    ['li[1]', xf:wrap(<first/>)],
+    ['li', xf:wrap(<other/>)]
+  ))
+return
+  $transformer(<ul><li>item 1</li><li>item 2</li><li>item 3</li></ul>)
+  
+=> <ul>
+     <first><li>item 1</li></first>
+     <other><li>item 2</li></other>
+     <other><li>item 3</li></other>
+   </ul>
 ~~~~
-
-Copy mode is almost the same but here all nodes are simply copied unless
-an `<xf:apply/>` control node is encountered.
-
-~~~~xquery
-declare function xf:copy($nodes, $xform) {
-    for $node in $nodes
-    return 
-        if ($node/self::xf:apply) then
-            xf:apply(($node/@*,$node/node()), $xform)
-        else if ($node instance of element()) then
-            element { name($node) } {
-                $node/@*,
-                xf:copy($node/node(), $xform)   
-            }
-        else
-            $node
-};
-~~~~
-
-I don't want to list `xf:match` here but what it does is iterate over
-templates and returns the node transformation function for the first
-template that matches. It currently uses a BaseX specific function from
-the Higher Order Function module (`hof:until`) but I want to change it
-to generic XQuery 3.0 eventually.
-
-You can look at the transformer source code [on Github][xform.xqm].
-
-
-## Control nodes
-
-By giving them a name it becomes harder to kill them. I have to admit
-that at first I thought: "bummer!". This frustrates many XPath
-expressions. If you need to check the parent node, then you cannot just
-do `$node/..` anymore but instead have to use something like:
-
-~~~~xquery
-$node/ancestor::*[not(self::xf:*)][1]
-~~~~
-
-But I'm not building an XSLT clone here. I'm making a little library for
-folding small templates together into, say, some HTML page output or a
-REST response. It's not likely that I will process DITA or TEI documents
-with it.
-
-I also started to see some advantages. Such control information in the
-structure returned from a node transformation keeps the node
-transformation away from the transformation engine.
 
 ## Wrap up
 
 I haven't cared much for performance yet. The main point was the design.
-Currently it runs on BaseX 7.9 and higher but I see no reason why it
-could not be made to run on other XQuery 3.0 engines. BaseX is my main
-database at the moment and I am not going to be investing a lot of time
-in other database yet.
+Currently it runs on recent snapshots of BaseX 8.0 (not yet released)
+but I see no reason why it could not be made to run on other XQuery
+engines that support XQuery 3.1. BaseX is my main database at the moment
+and I am not going to be investing a lot of time in other database yet.
 
-There is a lot more to do to make this a viable templating library but
-I'm happy with the transformers so far.
-
-I will be looking into the [Enlive][enlive] library for the other parts
-because I like the ideas it implements.
+I still haven't discussed how proper templating is done. For that we'll
+need to look at `xf:template` but using only the parts discussed here
+may already be useful.
 
 
 [origami]: https://github.com/xokomola/origami

@@ -84,19 +84,14 @@ The `$stories` variable contains a function that, when provided with
 some input nodes, will search for nodes matching the provided XPath
 expression.
 
-You may wonder why, if `xf:at` can be used to extract nodes from the
-input document, When I tested this I found 131 stories with `xf:at`.
+You may wonder why, when `xf:at` can be used to extract nodes from the
+input document. When I tested this I found 131 stories with `xf:at`.
 This is caused by a 'story' article wrapped inside another one. The
-`xf:extract` will ensure that only the unique nodes are returned and no
-node will also be a descendant of another node.
-
-Also, an extractor may be using several selector rules and although the
-first matching rule will be used, there might still be nodes that
-include already selected nodes and given the tagsoup that many HTML in
-the wild is you may need to counter-act this.
-
-An a full extractor also arranges the nodes so that they are in 
-document order again.
+`xf:extract` will ensure that only the unique nodes are returned, that
+they are in document-order and that no node will also be a descendant of
+another node. Under the hood the extractor will convert the rules passed
+in with `xf:at` but it will do a little cleanup before returning the
+extracted nodes. Something that `xf:at` doesn't do.
 
 ~~~xquery
 let $stories := xf:extract((
@@ -104,9 +99,6 @@ let $stories := xf:extract((
         ['article[contains(@class, "fairy-tale")]']
 ))
 ~~~
-
-What `xf:extract` ensures is that no duplicate nodes are returned and
-that all nodes will be returned in document order.
 
 To get the meaningful bits from each story we need a few more
 extractors. All of these will act upon a story node selected above.
@@ -216,7 +208,7 @@ you can use the `$in` convenience function to do this without the
 clutter.
 
 ~~~xquery
-let $select-byline := xf:at((['*[$in(@class, "byline")]', xf:text()])
+let $select-byline := xf:at(['*[$in(@class, "byline")]', xf:text()])
 ~~~
 
 

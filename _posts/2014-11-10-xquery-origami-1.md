@@ -182,10 +182,10 @@ transformer function.
 
 ~~~xquery
 let $transform := 
-  xf:do(
+  xf:do((
     xf:append(<new-element/>),
     xf:wrap(, <wrapper/>)
-  )
+  ))
 return
   $transform($input)
 ~~~
@@ -240,7 +240,7 @@ return
 => <first><li>item 1</li></first>
    <other><li>item 2</li></other>
    <other><li>item 3</li></other>
-~~~~
+~~~
 
 Behind the scenes the extractor function creates an `xf:at` function
 using the first array element and then feeds the resulting nodes one by
@@ -254,7 +254,7 @@ If you need only one rule you may just as well use:
 
 ~~~xquery
 $input => xf:at(['li', xf:wrap(<other/>)])
-
+~~~
 
 ## Transformers
 
@@ -277,7 +277,7 @@ return
      <other><li>item 2</li></other>
      <other><li>item 3</li></other>
    </ul>
-~~~~
+~~~
 
 ## Wrap up
 

@@ -218,9 +218,7 @@ I have shown that coding a screen scraper in XQuery can be fun and even
 lead to pretty code.
 
 Next, I want to incorporate the same techniques used for the Extractors
-into the [Transformers][origami-1]. The latter still use the quite lame
-element name selectors and I would like that they also employ the much
-more powerful selector functions. Along the way I'll probably be
+into the [Transformers][origami-1]. Along the way I'll probably be
 refactoring the code once more so do expect changes to how things work.
 Welcome to the cutting edge.
 

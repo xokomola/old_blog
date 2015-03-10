@@ -282,7 +282,7 @@ return
 ## Wrap up
 
 I haven't cared much for performance yet. The main point was the design.
-Currently it runs on recent snapshots of BaseX 8.0 (not yet released)
+Currently it only runs on BaseX 8.0 or higher
 but I see no reason why it could not be made to run on other XQuery
 engines that support XQuery 3.1. BaseX is my main database at the moment
 and I am not going to be investing a lot of time in other database yet.

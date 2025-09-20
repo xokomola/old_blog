@@ -1,4 +1,3 @@
-## xokomola.github.io
- 
-This is my GitHub user page made with Jekyll. Download it, fork it,
-follow it, give it away...
+## My Old Blog
+
+This was a blog made using Jekyll.
